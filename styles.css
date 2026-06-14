@@ -237,12 +237,12 @@ button, input, textarea, select { font: inherit; }
   margin: 0;
 }
 h1, .h1 {
-  font-size: clamp(3.2rem, 8vw, 5.8rem);
-  line-height: .96;
+  font-size: clamp(2.4rem,5vw,4.3rem);
+   line-height:1.05;
 }
 h2, .h2 {
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  line-height: 1.02;
+  font-size:clamp(1.8rem,3vw,2.8rem);
+  line-height:1.1;
 }
 h3, .h3 {
   font-size: 1.25rem;
