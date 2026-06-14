@@ -312,11 +312,11 @@ gap:8px;
 
 padding:10px 14px;
 
-background:#2563EB;
+background:#EEF8F1;
 
-color:#FFFFFF;
+color:#2D6A4F;
 
-border:none;
+border:1px solid #B7DEC3;
 
 border-radius:999px;
 
@@ -325,6 +325,7 @@ font-size:13px;
 font-weight:600;
 
 }
+
 .hero-visual {
   position: relative;
   min-height: 620px;
