@@ -860,6 +860,12 @@ textarea { min-height: 160px; resize: vertical; }
 }
 
 }
+.footer-logo{
+    height:60px;
+    width:auto;
+    display:block;
+    margin-bottom:16px;
+}
 
 /* Shopify × Stripe × Linear Theme Override */
 .topbar{background:linear-gradient(90deg,rgba(37,99,235,.18),rgba(20,184,166,.12));}
