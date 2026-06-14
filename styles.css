@@ -172,11 +172,13 @@ color: #000000;
 .btn-primary:hover {
   box-shadow: 0 18px 34px rgba(31,122,69,.40);
 }
-.btn-secondary {
-  background: rgba(255,255,255,0.03);
-  color: var(--text);
-  border-color: rgba(255,255,255,0.08);
+
+.btn-secondary{
+background:#FFFFFF;
+color:#111827;
+border:1px solid rgba(0,0,0,.08);
 }
+
 .btn-secondary:hover {
   border-color: rgba(42,174,103,0.4);
   background: rgba(42,174,103,0.08);
