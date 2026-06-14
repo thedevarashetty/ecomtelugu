@@ -71,7 +71,7 @@ font-weight:600;
   top: 0;
   z-index: 50;
   backdrop-filter: blur(18px);
-  background: rgba(7, 30, 22, 0.75);
+ background:rgba(255,255,255,1);
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .nav {
@@ -127,13 +127,14 @@ font-weight:600;
   gap: 24px;
 }
 .nav-links a {
-  color: var(--muted);
+  color:#111827;
   transition: color var(--transition), transform var(--transition);
   font-size: 14px;
   position: relative;
 }
-.nav-links a:hover, .nav-links a.active {
-  color: var(--text);
+.nav-links a:hover, 
+.nav-links a.active {
+color: #000000;
 }
 .nav-links a::after {
   content: "";
