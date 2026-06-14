@@ -165,10 +165,19 @@ color: #000000;
 }
 .btn:hover { transform: translateY(-1px); }
 .btn-primary{
-background:#EEF8F1;
-color:#2D6A4F;
-border:1px solid #B7DEC3;
+
+background:linear-gradient(
+135deg,
+#14B84A,
+#1F9D55
+);
+
+color:#FFFFFF;
+
+border:none;
+
 box-shadow:none;
+
 }
 
 .btn-primary:hover {
@@ -314,7 +323,7 @@ padding:10px 14px;
 
 background:#EEF8F1;
 
-color:#2D6A4F;
+color:#111827;
 
 border:1px solid #B7DEC3;
 
