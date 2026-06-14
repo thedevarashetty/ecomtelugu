@@ -892,6 +892,14 @@ textarea { min-height: 160px; resize: vertical; }
     margin-bottom:16px;
 }
 
+.nav-wrap.scrolled{
+
+background:rgba(255,255,255,.50);
+
+backdrop-filter:blur(20px);
+
+}
+
 /* Shopify × Stripe × Linear Theme Override */
 .topbar{background:linear-gradient(90deg,rgba(37,99,235,.18),rgba(20,184,166,.12));}
 .nav-wrap{background:rgba(5,8,22,.82)!important;}
@@ -906,3 +914,5 @@ radial-gradient(circle at 70% 80%, rgba(59,130,246,.16), transparent 22%);
 }
 .whatsapp-float{background:linear-gradient(135deg,#2563EB,#14B8A6)!important;}
 .footer{background:#040714;}
+
+
