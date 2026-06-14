@@ -276,18 +276,12 @@ h3, .h3 {
 .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
-.card{
-
-background:rgba(15,23,42,.9);
-
-border:1px solid var(--border);
-
-border-radius:20px;
-
-backdrop-filter:blur(12px);
-
-transition:.35s ease;
-
+.card {
+  background: linear-gradient(180deg, rgba(16,39,29,0.96), rgba(11,36,26,0.98));
+  border: 1px solid rgba(255,255,255,0.07);
+  border-color: rgba(30,74,51,0.9);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
 }
 .card.pad { padding: 24px; }
 .card.glow {
