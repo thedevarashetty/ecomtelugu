@@ -165,13 +165,10 @@ color: #000000;
 }
 .btn:hover { transform: translateY(-1px); }
 .btn-primary{
-background:linear-gradient(
-135deg,
-#14B84A,
-#1F9D55
-);
-color:#FFFFFF;
-border:none;
+background:#EEF8F1;
+color:#2D6A4F;
+border:1px solid #B7DEC3;
+box-shadow:none;
 }
 
 .btn-primary:hover {
