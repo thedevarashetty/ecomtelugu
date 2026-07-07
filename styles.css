@@ -6,7 +6,7 @@
   --card-2: #111827;
   --green: #2563EB;
   --green-2: #14B8A6;
-  --navy: #0B1220;540
+  --navy: #0B1220;
   --text:#111827;
   --muted:#6B7280;
   --border: rgba(255,255,255,0.08);
@@ -340,11 +340,15 @@ font-weight:600;
   min-height: 620px;
 }
 .dashboard {
-  color:#FFFFFF;
   position: relative;
   height: 100%;
-  padding: 22px;
+  padding: 32px;
   overflow: hidden;
+  color:#111827;
+  background:linear-gradient(180deg,#F8FCF9 0%,#EEF8F2 100%);
+  border:1px solid #DDEFE4;
+  border-radius:32px;
+  box-shadow:0 15px 45px rgba(15,23,42,.08);
 }
 .dashboard::before {
   content:"";
