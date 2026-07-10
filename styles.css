@@ -1,6 +1,8 @@
 /* ==================================================================
    E-COM TELUGU — DESIGN SYSTEM
    Premium SaaS aesthetic (Stripe / Linear / Shopify / Framer / Vercel)
+   Design-QA pass: one spacing rhythm, one card language, one accent
+   system, one accordion system, cleaned variables — no dead CSS.
    ================================================================== */
 
 
@@ -24,50 +26,67 @@
   /* Backgrounds */
   --bg:#FFFFFF;
   --bg-soft:#F8FBF8;
-  --bg-alt:#F8FBF8;
-  --surface:#FFFFFF;
-  --surface-2:#F8FAFC;
-
-  /* Cards */
   --card:#FFFFFF;
-  --card-hover:#FFFFFF;
 
   /* Text */
   --text:#111827;
   --text-light:#374151;
   --muted:#6B7280;
   --muted-light:#9CA3AF;
-  --text-on-dark:#F8FAFC;
-  --muted-on-dark:#94A3B8;
 
   /* Borders */
   --border:#E5E7EB;
   --border-soft:#EEF2F7;
 
-  /* Shadows (one system, used everywhere) */
+  /* Shadows — one system, used everywhere */
   --shadow-xs:0 2px 6px rgba(15,23,42,.04);
   --shadow-sm:0 8px 24px rgba(15,23,42,.06);
   --shadow:0 15px 45px rgba(15,23,42,.08);
   --shadow-lg:0 30px 80px rgba(15,23,42,.12);
   --shadow-soft: var(--shadow-sm);
 
-  /* Glows */
+  /* Glows — kept extremely subtle by design */
   --glow-green:0 0 40px rgba(34,197,94,.14);
   --glow-blue:0 0 40px rgba(37,99,235,.12);
 
-  /* Radius (one system) */
+  /* Radius — one system */
   --radius-xl:32px;
   --radius-lg:24px;
   --radius-md:18px;
   --radius-sm:14px;
   --radius-pill:999px;
 
+  /* Spacing scale — one rhythm for the whole page */
+  --space-2xs:8px;
+  --space-xs:14px;
+  --space-sm:18px;
+  --space-md:24px;
+  --space-lg:32px;
+  --space-xl:40px;
+  --space-2xl:56px;
+
   /* Layout */
   --max:1200px;
 
-  /* Motion (one system) */
-  --transition:240ms cubic-bezier(.2,.8,.2,1);
+  /* Motion — one system */
+  --transition:220ms cubic-bezier(.2,.8,.2,1);
   --transition-slow:420ms cubic-bezier(.2,.8,.2,1);
+
+  /* Category accent tokens (very low-saturation pastels).
+     Used only for: icon container / top hairline / hover border / active state.
+     Cards themselves stay ~90-95% white. */
+  --tint-sky:#0EA5E9;         --tint-sky-soft:#E0F2FE;
+  --tint-lavender:#8B5CF6;    --tint-lavender-soft:#EDE9FE;
+  --tint-mint:#14B8A6;        --tint-mint-soft:#F0FDFA;
+  --tint-amber:#F59E0B;       --tint-amber-soft:#FEF3C7;
+  --tint-indigo:#6366F1;      --tint-indigo-soft:#E0E7FF;
+  --tint-orange:#F97316;      --tint-orange-soft:#FFEDD5;
+  --tint-coral:#FB7185;       --tint-coral-soft:#FFE4E6;
+  --tint-cyan:#06B6D4;        --tint-cyan-soft:#CFFAFE;
+  --tint-purple:#A855F7;      --tint-purple-soft:#F3E8FF;
+  --tint-emerald:#10B981;     --tint-emerald-soft:#D1FAE5;
+  --tint-green:#16A34A;       --tint-green-soft:#DCFCE7;
+  --tint-peach:#F97316;       --tint-peach-soft:#FFF7ED;
 }
 
 
@@ -92,14 +111,22 @@ img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
 button, input, textarea, select{ font:inherit; }
 
-::selection{
-  background:#BBF7D0;
-  color:#111827;
+::selection{ background:#BBF7D0; color:#111827; }
+
+/* Consistent focus states across every interactive element */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+  border-radius:4px;
 }
 
 
 /* ==================================================================
-   3. LAYOUT
+   3. LAYOUT & SPACING RHYTHM
    ================================================================== */
 .container{
   width:min(var(--max), calc(100% - 32px));
@@ -107,13 +134,14 @@ button, input, textarea, select{ font:inherit; }
 }
 
 .section{ padding:96px 0; }
-.section-tight{ padding:64px 0; }
+.section-tight{ padding:72px 0; }
 .section-header{
   max-width:760px;
-  margin-bottom:32px;
+  margin-bottom:var(--space-xl);
 }
+.section-header .lead{ margin-top:var(--space-2xs); }
 
-.grid{ display:grid; gap:18px; }
+.grid{ display:grid; gap:var(--space-md); }
 .grid-2{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
 .grid-3{ grid-template-columns:repeat(3, minmax(0, 1fr)); }
 .grid-4{ grid-template-columns:repeat(4, minmax(0, 1fr)); }
@@ -121,7 +149,7 @@ button, input, textarea, select{ font:inherit; }
 .split{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:24px;
+  gap:var(--space-md);
   align-items:start;
 }
 
@@ -137,22 +165,9 @@ button, input, textarea, select{ font:inherit; }
   margin:0;
 }
 
-h1, .h1{
-  font-size:clamp(3rem, 6vw, 5rem);
-  line-height:1.04;
-  max-width:12ch;
-}
-
-h2, .h2{
-  font-size:clamp(2.2rem, 4vw, 3.4rem);
-  line-height:1.1;
-}
-
-h3, .h3{
-  font-size:1.45rem;
-  line-height:1.3;
-  font-weight:700;
-}
+h1, .h1{ font-size:clamp(3rem, 6vw, 5rem); line-height:1.04; max-width:12ch; }
+h2, .h2{ font-size:clamp(2.2rem, 4vw, 3.4rem); line-height:1.1; }
+h3, .h3{ font-size:1.45rem; line-height:1.3; font-weight:700; }
 
 .lead{
   font-size:1.2rem;
@@ -174,7 +189,7 @@ h3, .h3{
   border-radius:var(--radius-pill);
   font-size:13px;
   font-weight:600;
-  margin-bottom:18px;
+  margin-bottom:var(--space-sm);
 }
 
 .pill{
@@ -220,6 +235,7 @@ h3, .h3{
   white-space:nowrap;
 }
 .btn:hover{ transform:translateY(-2px); }
+.btn:active{ transform:translateY(0); }
 
 .btn-primary{
   background:linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -227,9 +243,7 @@ h3, .h3{
   border:none;
   box-shadow:0 12px 28px rgba(22,163,74,.28);
 }
-.btn-primary:hover{
-  box-shadow:0 18px 40px rgba(22,163,74,.38);
-}
+.btn-primary:hover{ box-shadow:0 18px 40px rgba(22,163,74,.38); }
 
 .btn-secondary{
   background:#FFFFFF;
@@ -244,7 +258,7 @@ h3, .h3{
 
 
 /* ==================================================================
-   6. CARDS (single shared card language)
+   6. CARDS — one shared card language for the whole site
    ================================================================== */
 .card{
   background:var(--card);
@@ -252,13 +266,12 @@ h3, .h3{
   border-radius:var(--radius-xl);
   box-shadow:var(--shadow-soft);
 }
-.card.pad{ padding:24px; }
-.card.glow{
-  box-shadow:var(--shadow), var(--glow-green);
-}
+.card.pad{ padding:var(--space-md); }
+.card.glow{ box-shadow:var(--shadow), var(--glow-green); }
 
-/* Generic light "soft" card used across sections that previously had
-   dark rgba(255,255,255,.03) surfaces */
+/* Shared base for every "feature card" style component. All hover
+   elevation, radius and shadow behaviour is unified here so no two
+   cards on the site feel like they came from a different system. */
 .icon-card,
 .stat,
 .timer .box,
@@ -266,12 +279,35 @@ h3, .h3{
 .acc-item,
 .product-card,
 .mini-card,
-.visual-card{
+.visual-card,
+.story-card,
+.showcase-card{
   background:#FFFFFF;
   border:1px solid var(--border);
   box-shadow:var(--shadow-xs);
   transition:transform var(--transition), border-color var(--transition), box-shadow var(--transition), background var(--transition);
 }
+
+/* Utility accent classes — apply ONE of these to a card, or to its
+   grid wrapper (the custom property inherits down to every child
+   .icon-card automatically), to give an entire section one consistent
+   identity without touching individual cards or markup structure:
+     .accent-mint     → Community, Roadmap-style sections
+     .accent-emerald  → Bonus Stack
+     .accent-green    → Pricing feature checklist (matches --primary)
+   Module Grid is the only place using the full 10-colour rotation,
+   scoped separately below via .module-grid so it never leaks here. */
+.accent-sky      { --card-accent:var(--tint-sky);      --card-accent-soft:var(--tint-sky-soft); }
+.accent-lavender { --card-accent:var(--tint-lavender); --card-accent-soft:var(--tint-lavender-soft); }
+.accent-mint     { --card-accent:var(--tint-mint);     --card-accent-soft:var(--tint-mint-soft); }
+.accent-amber    { --card-accent:var(--tint-amber);    --card-accent-soft:var(--tint-amber-soft); }
+.accent-indigo   { --card-accent:var(--tint-indigo);   --card-accent-soft:var(--tint-indigo-soft); }
+.accent-orange   { --card-accent:var(--tint-orange);   --card-accent-soft:var(--tint-orange-soft); }
+.accent-coral    { --card-accent:var(--tint-coral);    --card-accent-soft:var(--tint-coral-soft); }
+.accent-cyan     { --card-accent:var(--tint-cyan);     --card-accent-soft:var(--tint-cyan-soft); }
+.accent-purple   { --card-accent:var(--tint-purple);   --card-accent-soft:var(--tint-purple-soft); }
+.accent-emerald  { --card-accent:var(--tint-emerald);  --card-accent-soft:var(--tint-emerald-soft); }
+.accent-green    { --card-accent:var(--tint-green);    --card-accent-soft:var(--tint-green-soft); }
 
 
 /* ==================================================================
@@ -320,12 +356,7 @@ h3, .h3{
   gap:18px;
 }
 
-.brand{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  min-width:0;
-}
+.brand{ display:flex; align-items:center; gap:14px; min-width:0; }
 .brand-mark{
   width:44px; height:44px;
   border-radius:14px;
@@ -357,16 +388,9 @@ h3, .h3{
   line-height:1.1;
   color:var(--text);
 }
-.brand-text span{
-  color:var(--muted);
-  font-size:13px;
-}
+.brand-text span{ color:var(--muted); font-size:13px; }
 
-.nav-links{
-  display:flex;
-  align-items:center;
-  gap:28px;
-}
+.nav-links{ display:flex; align-items:center; gap:28px; }
 .nav-links a{
   color:var(--text-light);
   font-size:15px;
@@ -402,7 +426,9 @@ h3, .h3{
   color:var(--text);
   align-items:center;
   justify-content:center;
+  transition:border-color var(--transition), background var(--transition);
 }
+.hamburger:hover{ border-color:rgba(34,197,94,.3); background:var(--bg-soft); }
 .hamburger span,
 .hamburger span::before,
 .hamburger span::after{
@@ -418,11 +444,7 @@ h3, .h3{
 
 .mobile-panel{ display:none; padding:0 0 18px; }
 .mobile-panel.open{ display:block; }
-.mobile-panel .stack{
-  display:grid;
-  gap:12px;
-  padding:16px 0 0;
-}
+.mobile-panel .stack{ display:grid; gap:12px; padding:16px 0 0; }
 .mobile-panel a,
 .mobile-panel .btn{ width:100%; }
 
@@ -434,26 +456,23 @@ h3, .h3{
 .hero-wrap{
   display:grid;
   grid-template-columns:1.05fr .95fr;
-  gap:40px;
+  gap:var(--space-xl);
   align-items:center;
 }
 .hero-copy .actions{
   display:flex;
-  gap:14px;
+  gap:var(--space-xs);
   flex-wrap:wrap;
-  margin-top:32px;
+  margin-top:var(--space-lg);
 }
 .hero-badges{
   display:flex;
   gap:12px;
   flex-wrap:wrap;
-  margin-top:28px;
+  margin-top:var(--space-md);
 }
 
-.hero-visual{
-  position:relative;
-  min-height:620px;
-}
+.hero-visual{ position:relative; min-height:620px; }
 
 .dashboard{
   position:relative;
@@ -481,8 +500,8 @@ h3, .h3{
 .metric-row{
   display:grid;
   grid-template-columns:1.15fr .85fr;
-  gap:14px;
-  margin-bottom:14px;
+  gap:var(--space-xs);
+  margin-bottom:var(--space-xs);
 }
 
 .mini-card, .visual-card{
@@ -497,7 +516,7 @@ h3, .h3{
   color:var(--primary-dark);
 }
 
-.progress-bars{ display:grid; gap:10px; margin-top:18px; }
+.progress-bars{ display:grid; gap:10px; margin-top:var(--space-sm); }
 .progress{
   height:10px;
   border-radius:999px;
@@ -523,23 +542,15 @@ h3, .h3{
 }
 .sale-graph svg{ position:absolute; inset:0; width:100%; height:100%; }
 
-.stat-stack{ display:grid; gap:14px; }
+.stat-stack{ display:grid; gap:var(--space-xs); }
 .stat-row{
   display:grid;
   grid-template-columns:repeat(2, minmax(0, 1fr));
-  gap:14px;
+  gap:var(--space-xs);
 }
-.stat{
-  padding:18px;
-  border-radius:var(--radius-lg);
-}
+.stat{ padding:18px; border-radius:var(--radius-lg); }
 .stat span{ color:var(--muted); font-size:13px; }
-.stat strong{
-  color:var(--text);
-  display:block;
-  font-size:24px;
-  margin-top:10px;
-}
+.stat strong{ color:var(--text); display:block; font-size:24px; margin-top:10px; }
 
 .product-cards{ display:grid; gap:12px; }
 .product-card{
@@ -568,47 +579,61 @@ h3, .h3{
 .counter-row{
   display:grid;
   grid-template-columns:repeat(4, minmax(0, 1fr));
-  gap:16px;
+  gap:var(--space-sm);
 }
-.counter{ padding:22px; text-align:center; }
+.counter{ padding:26px 22px; text-align:center; }
 .counter strong{
   display:block;
   font-size:clamp(2rem, 4vw, 3rem);
   line-height:1;
   color:var(--accent);
 }
-.counter span{
-  color:var(--muted);
-  font-size:14px;
-  margin-top:8px;
-  display:block;
-}
+.counter span{ color:var(--muted); font-size:14px; margin-top:8px; display:block; }
 
-/* Countdown timer */
-.timer{ display:flex; gap:12px; flex-wrap:wrap; }
+/* Countdown — brought into the same premium card language */
+.timer{ display:flex; gap:var(--space-xs); flex-wrap:wrap; }
 .timer .box{
-  min-width:100px;
-  padding:18px 16px;
+  min-width:104px;
+  padding:22px 18px;
   border-radius:var(--radius-lg);
+  border-top:2px solid var(--primary-light);
   text-align:center;
+  transition:transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+.timer .box:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-sm);
+  border-color:var(--border);
+  border-top-color:rgba(34,197,94,.4);
 }
 .timer .box strong{
   display:block;
-  font-size:2rem;
+  font-family:Manrope, Inter, sans-serif;
+  font-weight:800;
+  font-size:clamp(1.9rem, 4vw, 2.4rem);
+  letter-spacing:-.02em;
   line-height:1;
   color:var(--text);
 }
-.timer .box small{ color:var(--muted); }
+.timer .box small{
+  display:block;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
 
-/* Roadmap */
-.roadmap{ position:relative; padding-top:24px; }
+/* Roadmap — identity: Mint */
+.roadmap{ position:relative; padding-top:28px; }
 .roadmap-track{
   display:grid;
   grid-template-columns:repeat(5, minmax(0, 1fr));
-  gap:22px;
+  gap:var(--space-md);
 }
 .roadmap-step{
-  padding:38px 30px;
+  padding:44px 30px;
   border-radius:var(--radius-xl);
   position:relative;
   display:flex;
@@ -622,37 +647,30 @@ h3, .h3{
   border-radius:999px;
   align-items:center;
   justify-content:center;
-  margin-bottom:26px;
-  background:var(--primary-light);
-  border:1px solid rgba(34,197,94,.22);
-  color:var(--primary-dark);
+  margin-bottom:28px;
+  background:var(--tint-mint-soft);
+  border:1px solid rgba(20,184,166,.24);
+  color:#0F766E;
   font-weight:700;
   font-size:14px;
   letter-spacing:-.01em;
 }
-.roadmap-step h3{
-  margin-bottom:12px;
-  letter-spacing:-.02em;
-}
-.roadmap-step p{
-  color:var(--muted);
-  margin:0;
-  line-height:1.75;
-}
+.roadmap-step h3{ margin-bottom:14px; letter-spacing:-.02em; }
+.roadmap-step p{ color:var(--muted); margin:0; line-height:1.8; }
 .roadmap-step:hover{
   transform:translateY(-6px);
   box-shadow:var(--shadow-lg);
-  border-color:rgba(34,197,94,.16);
+  border-color:rgba(20,184,166,.2);
 }
 
-/* Feature / icon cards */
+/* Feature / module cards — per-category accent system */
 .icon-grid{
   display:grid;
-  gap:18px;
+  gap:var(--space-md);
   grid-template-columns:repeat(4, minmax(0, 1fr));
 }
 .icon-card{
-  padding:24px;
+  padding:28px;
   border-radius:var(--radius-lg);
   position:relative;
   overflow:hidden;
@@ -677,34 +695,35 @@ h3, .h3{
   border-radius:16px;
   background:var(--card-accent-soft, var(--primary-light));
   border:1px solid var(--border);
-  margin-bottom:14px;
+  margin-bottom:var(--space-xs);
   font-size:22px;
 }
 
-/* Per-category accent — subtle tints only (icon bg / top hairline / hover border).
-   Order matches the 10 modules: Research, Supplier, Shopify, Amazon, Flipkart,
-   Fulfillment, Meta, Google, Scaling, Automation.
-   If the module grid markup ever changes order, re-map the nth-child indices below. */
-.icon-grid .icon-card:nth-child(1)  { --card-accent:#0EA5E9; --card-accent-soft:#E0F2FE; } /* Research – Sky */
-.icon-grid .icon-card:nth-child(2)  { --card-accent:#8B5CF6; --card-accent-soft:#EDE9FE; } /* Supplier – Lavender */
-.icon-grid .icon-card:nth-child(3)  { --card-accent:#14B8A6; --card-accent-soft:#F0FDFA; } /* Shopify – Mint */
-.icon-grid .icon-card:nth-child(4)  { --card-accent:#F59E0B; --card-accent-soft:#FEF3C7; } /* Amazon – Amber */
-.icon-grid .icon-card:nth-child(5)  { --card-accent:#6366F1; --card-accent-soft:#E0E7FF; } /* Flipkart – Indigo */
-.icon-grid .icon-card:nth-child(6)  { --card-accent:#F97316; --card-accent-soft:#FFEDD5; } /* Fulfillment – Orange */
-.icon-grid .icon-card:nth-child(7)  { --card-accent:#FB7185; --card-accent-soft:#FFE4E6; } /* Meta – Coral */
-.icon-grid .icon-card:nth-child(8)  { --card-accent:#06B6D4; --card-accent-soft:#CFFAFE; } /* Google – Cyan */
-.icon-grid .icon-card:nth-child(9)  { --card-accent:#A855F7; --card-accent-soft:#F3E8FF; } /* Scaling – Purple */
-.icon-grid .icon-card:nth-child(10) { --card-accent:#10B981; --card-accent-soft:#D1FAE5; } /* Automation – Emerald */
+/* Module-grid per-item accents. Scoped to .module-grid so this
+   10-colour system never leaks into other .icon-grid instances
+   (e.g. "Why Learn", Community) which should read as ONE identity —
+   see the .accent-* utilities above for those.
+   >>> HTML note: add class="module-grid" alongside the existing
+   icon-grid class on the Module Grid's wrapper (one class, no
+   structural change) so this mapping applies only there. <<< */
+.module-grid .icon-card:nth-child(1)  { --card-accent:var(--tint-sky);     --card-accent-soft:var(--tint-sky-soft); }     /* Research */
+.module-grid .icon-card:nth-child(2)  { --card-accent:var(--tint-lavender);--card-accent-soft:var(--tint-lavender-soft); } /* Supplier */
+.module-grid .icon-card:nth-child(3)  { --card-accent:var(--tint-mint);    --card-accent-soft:var(--tint-mint-soft); }    /* Shopify */
+.module-grid .icon-card:nth-child(4)  { --card-accent:var(--tint-amber);   --card-accent-soft:var(--tint-amber-soft); }   /* Amazon */
+.module-grid .icon-card:nth-child(5)  { --card-accent:var(--tint-indigo);  --card-accent-soft:var(--tint-indigo-soft); }  /* Flipkart */
+.module-grid .icon-card:nth-child(6)  { --card-accent:var(--tint-orange);  --card-accent-soft:var(--tint-orange-soft); }  /* Fulfillment */
+.module-grid .icon-card:nth-child(7)  { --card-accent:var(--tint-coral);   --card-accent-soft:var(--tint-coral-soft); }   /* Meta */
+.module-grid .icon-card:nth-child(8)  { --card-accent:var(--tint-cyan);    --card-accent-soft:var(--tint-cyan-soft); }    /* Google */
+.module-grid .icon-card:nth-child(9)  { --card-accent:var(--tint-purple);  --card-accent-soft:var(--tint-purple-soft); }  /* Scaling */
+.module-grid .icon-card:nth-child(10) { --card-accent:var(--tint-emerald); --card-accent-soft:var(--tint-emerald-soft); } /* Automation */
 
-/* Accordion (shared by Curriculum + FAQ; FAQ pastel rotation overrides below) */
-.accordion{ display:grid; gap:14px; }
+/* Accordion — one system for Curriculum, FAQ, and any other instance */
+.accordion{ display:grid; gap:var(--space-xs); }
 .acc-item{
   border-radius:var(--radius-lg);
   overflow:hidden;
   transition:background var(--transition-slow), border-color var(--transition-slow), box-shadow var(--transition-slow), padding var(--transition-slow);
 }
-
-/* Default / Curriculum open state — soft mint wash */
 .acc-item.open{
   background:linear-gradient(180deg, #F0FDFA 0%, #FFFFFF 65%);
   border-color:rgba(20,184,166,.25);
@@ -722,10 +741,13 @@ h3, .h3{
   padding:24px 26px;
   text-align:left;
   cursor:pointer;
+  font-size:16px;
+  font-weight:700;
 }
 .acc-btn span{
   color:var(--muted);
   font-size:14px;
+  font-weight:400;
   display:block;
   margin-top:6px;
   line-height:1.6;
@@ -759,11 +781,7 @@ h3, .h3{
 }
 
 /* Testimonials / story cards */
-.story-card{
-  display:grid;
-  gap:14px;
-  padding:24px;
-}
+.story-card{ display:grid; gap:var(--space-xs); padding:28px; }
 .story-top{ display:flex; align-items:center; gap:14px; }
 .avatar{
   width:56px; height:56px;
@@ -774,22 +792,17 @@ h3, .h3{
   place-items:center;
   font-weight:800;
 }
-.story-card .quote{ font-size:16px; color:var(--text); line-height:1.6; }
+.story-card .quote{ font-size:16px; color:var(--text); line-height:1.65; }
 .story-card .role{ color:var(--muted); font-size:14px; }
 
 /* Student showcase */
 .showcase{
   display:grid;
-  gap:18px;
+  gap:var(--space-md);
   grid-template-columns:repeat(4, minmax(0, 1fr));
 }
-.showcase-card{
-  overflow:hidden;
-  border-radius:var(--radius-lg);
-  background:#FFFFFF;
-  border:1px solid var(--border);
-  box-shadow:var(--shadow-xs);
-}
+.showcase-card{ overflow:hidden; border-radius:var(--radius-lg); }
+.showcase-card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-sm); }
 .showcase-media{
   height:180px;
   background:
@@ -804,29 +817,32 @@ h3, .h3{
   border-radius:18px;
   border:1px solid rgba(255,255,255,.6);
 }
-.showcase-body{ padding:18px; }
+.showcase-body{ padding:20px; }
 
-/* Pricing */
+/* Pricing — rebalanced composition */
 .pricing{
   display:grid;
-  grid-template-columns:1.05fr .95fr;
-  gap:24px;
-  align-items:center;
+  grid-template-columns:.95fr 1.05fr;
+  gap:var(--space-md);
+  align-items:stretch;
 }
 .price-card{
-  padding:36px;
+  padding:40px;
   position:relative;
   overflow:hidden;
   border-radius:var(--radius-xl);
   box-shadow:var(--shadow-lg), var(--glow-green);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
 }
-.price-badge{ position:absolute; top:20px; right:20px; }
+.price-badge{ position:absolute; top:22px; right:22px; }
 .price{
   display:flex;
   align-items:flex-end;
   gap:14px;
   flex-wrap:wrap;
-  margin-top:10px;
+  margin-top:12px;
 }
 .price .old{
   color:var(--muted-light);
@@ -840,23 +856,27 @@ h3, .h3{
   font-weight:800;
   color:var(--primary-dark);
 }
-.checklist{ display:grid; gap:12px; margin:24px 0 0; }
+.checklist{ display:grid; gap:var(--space-2xs); margin:var(--space-md) 0 0; }
 .check{
   display:flex;
   align-items:flex-start;
-  gap:10px;
+  gap:12px;
   color:var(--text);
+  padding:2px 0;
+  line-height:1.7;
+  transition:transform var(--transition);
 }
+.check:hover{ transform:translateX(2px); }
 .check::before{
   content:"✓";
   flex:0 0 auto;
-  width:22px; height:22px;
+  width:24px; height:24px;
   display:grid; place-items:center;
   border-radius:999px;
   background:var(--primary-light);
   color:var(--primary-dark);
-  margin-top:2px;
-  font-size:13px;
+  margin-top:1px;
+  font-size:12px;
   font-weight:700;
 }
 
@@ -864,16 +884,12 @@ h3, .h3{
 .faq-layout{
   display:grid;
   grid-template-columns:1fr 420px;
-  gap:24px;
+  gap:var(--space-md);
 }
-.side-note{
-  position:sticky;
-  top:112px;
-  align-self:start;
-}
+.side-note{ position:sticky; top:112px; align-self:start; }
 
 /* Form */
-.form{ display:grid; gap:14px; }
+.form{ display:grid; gap:var(--space-xs); }
 .field{ display:grid; gap:8px; }
 label{ font-size:14px; color:var(--text-light); font-weight:600; }
 input, textarea, select{
@@ -898,35 +914,64 @@ textarea{ min-height:160px; resize:vertical; }
    10. FOOTER
    ================================================================== */
 .footer{
-  padding:56px 0 42px;
+  position:relative;
+  padding:var(--space-2xl) 0 var(--space-xl);
   border-top:1px solid var(--border);
   background:var(--bg-soft);
   color:var(--muted);
+  overflow:hidden;
 }
+/* Extremely subtle ambient glow — meant to almost disappear */
+.footer::before{
+  content:"";
+  position:absolute;
+  top:-30%;
+  left:50%;
+  transform:translateX(-50%);
+  width:60%;
+  height:240px;
+  background:radial-gradient(circle, rgba(34,197,94,.07), transparent 70%);
+  filter:blur(50px);
+  pointer-events:none;
+}
+.footer .container{ position:relative; z-index:1; }
+
 .footer-grid{
   display:grid;
   grid-template-columns:1.2fr .8fr .8fr .8fr;
-  gap:32px;
+  gap:var(--space-lg);
 }
-.footer a{ color:var(--text-light); }
-.footer a:hover{ color:var(--primary-dark); }
-.footer small{ display:block; margin-top:18px; line-height:1.7; }
-.footer-logo{
-  height:36px;
-  width:auto;
+.footer-grid strong{
   display:block;
-  margin-bottom:16px;
+  color:var(--text);
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  opacity:.85;
+  margin-bottom:var(--space-sm);
 }
+.footer a{
+  display:block;
+  color:var(--text-light);
+  font-size:14px;
+  margin-bottom:10px;
+  transition:color var(--transition);
+}
+.footer a:hover{ color:var(--primary-dark); }
+.footer small{
+  display:block;
+  margin-top:var(--space-md);
+  line-height:1.7;
+  color:var(--muted-light);
+}
+.footer-logo{ height:36px; width:auto; display:block; margin-bottom:18px; }
 
 
 /* ==================================================================
    11. FLOATING ELEMENTS & ANIMATION
    ================================================================== */
-.site-logo{
-  height:42px;
-  width:auto;
-  display:block;
-}
+.site-logo{ height:42px; width:auto; display:block; }
 
 .whatsapp-float{
   position:fixed;
@@ -941,7 +986,9 @@ textarea{ min-height:160px; resize:vertical; }
   box-shadow:0 18px 36px rgba(37,99,235,.28);
   z-index:60;
   border:1px solid rgba(255,255,255,.4);
+  transition:transform var(--transition), box-shadow var(--transition);
 }
+.whatsapp-float:hover{ transform:translateY(-3px); box-shadow:0 22px 44px rgba(37,99,235,.34); }
 .whatsapp-float svg{ width:26px; height:26px; fill:#FFFFFF; }
 
 .mobile-sticky-cta{
@@ -973,15 +1020,10 @@ textarea{ min-height:160px; resize:vertical; }
   transform:translateY(22px);
   transition:opacity 700ms ease, transform 700ms ease;
 }
-.reveal.in-view{
-  opacity:1;
-  transform:translateY(0);
-}
+.reveal.in-view{ opacity:1; transform:translateY(0); }
 
 .sticky-cta{ position:relative; }
-.sticky-cta.float{
-  animation:glowPulse 2.8s ease-in-out infinite;
-}
+.sticky-cta.float{ animation:glowPulse 2.8s ease-in-out infinite; }
 @keyframes glowPulse{
   0%, 100%{ box-shadow:0 12px 28px rgba(22,163,74,.22); }
   50%{ box-shadow:0 18px 40px rgba(34,197,94,.32); }
@@ -989,34 +1031,9 @@ textarea{ min-height:160px; resize:vertical; }
 
 
 /* ==================================================================
-   12. RESPONSIVE
-   ================================================================== */
-@media (max-width:1100px){
-  .hero-wrap, .split, .pricing, .faq-layout, .footer-grid{ grid-template-columns:1fr; }
-  .icon-grid, .counter-row, .showcase, .roadmap-track{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
-  .hero-visual{ min-height:540px; }
-  .side-note{ position:static; }
-}
-
-@media (max-width:820px){
-  .nav-links, .nav-actions{ display:none; }
-  .hamburger{ display:inline-flex; }
-  .section{ padding:72px 0; }
-  .grid-2, .grid-3, .grid-4, .stat-row, .metric-row, .icon-grid, .counter-row, .showcase, .roadmap-track{ grid-template-columns:1fr; }
-  .hero{ padding-top:40px; }
-  .hero-visual{ min-height:600px; }
-  .mobile-sticky-cta{ display:block; }
-  .whatsapp-float{ bottom:84px; }
-}
-
-@media (max-width:768px){
-  .site-logo{ height:42px; }
-}
-
-/* ==================================================================
-   FAQ — rotating pastel accordion (overrides the default mint open
-   state above only inside .faq-layout, so Curriculum stays mint).
-   Saturation kept very low (~5-8%) per brand direction.
+   12. FAQ — rotating pastel accordion (overrides the default mint
+   open state above only inside .faq-layout, so Curriculum stays
+   mint). Saturation kept very low (~5-8%) throughout.
    ================================================================== */
 .faq-layout .acc-item:nth-child(5n+1).open{
   background:linear-gradient(180deg, #F0FDFA 0%, #FFFFFF 65%); /* Mint */
@@ -1039,6 +1056,33 @@ textarea{ min-height:160px; resize:vertical; }
   border-color:rgba(6,182,212,.20);
 }
 
+
+/* ==================================================================
+   13. RESPONSIVE
+   ================================================================== */
+@media (max-width:1100px){
+  .hero-wrap, .split, .pricing, .faq-layout{ grid-template-columns:1fr; }
+  .icon-grid, .counter-row, .showcase, .roadmap-track{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+  .footer-grid{ grid-template-columns:1fr 1fr; gap:var(--space-md); }
+  .hero-visual{ min-height:540px; }
+  .side-note{ position:static; }
+}
+
+@media (max-width:820px){
+  .nav-links, .nav-actions{ display:none; }
+  .hamburger{ display:inline-flex; }
+  .section{ padding:72px 0; }
+  .grid-2, .grid-3, .grid-4, .stat-row, .metric-row, .icon-grid, .counter-row, .showcase, .roadmap-track{ grid-template-columns:1fr; }
+  .hero{ padding-top:40px; }
+  .hero-visual{ min-height:600px; }
+  .mobile-sticky-cta{ display:block; }
+  .whatsapp-float{ bottom:84px; }
+}
+
+@media (max-width:768px){
+  .site-logo{ height:42px; }
+}
+
 @media (max-width:540px){
   .container{ width:min(var(--max), calc(100% - 24px)); }
   h1, .h1{ font-size:clamp(2.8rem, 15vw, 4rem); }
@@ -1049,4 +1093,5 @@ textarea{ min-height:160px; resize:vertical; }
   .hero-visual{ min-height:560px; }
   .dashboard{ padding:16px; }
   .mobile-sticky-cta .row{ flex-direction:column; align-items:stretch; }
+  .footer-grid{ grid-template-columns:1fr; }
 }
