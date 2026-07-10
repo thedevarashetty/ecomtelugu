@@ -307,27 +307,58 @@ border:1px solid rgba(0,0,0,.08);
   font-size: 13px;
   margin-bottom: 18px;
 }
-.h1, h1, .h2, h2, .h3, h3 {
-  font-family: Manrope, Inter, system-ui, sans-serif;
-  letter-spacing: -.03em;
-  margin: 0;
+.h1,h1,.h2,h2,.h3,h3{
+
+font-family:Manrope,Inter,sans-serif;
+
+letter-spacing:-.04em;
+
+font-weight:800;
+
+color:#111827;
+
+margin:0;
+
 }
-h1, .h1 {
-  font-size: clamp(2.4rem,5vw,4rem);
-   line-height:1.05;
+
+h1,.h1{
+
+font-size:clamp(3rem,6vw,5rem);
+
+line-height:1.02;
+
+max-width:12ch;
+
 }
-h2, .h2 {
-  font-size:clamp(1.8rem,3vw,2.8rem);
-  line-height:1.1;
+
+h2,.h2{
+
+font-size:clamp(2.2rem,4vw,3.4rem);
+
+line-height:1.08;
+
 }
-h3, .h3 {
-  font-size: 1.25rem;
-  line-height: 1.2;
+
+h3,.h3{
+
+font-size:1.45rem;
+
+line-height:1.3;
+
+font-weight:700;
+
 }
-.lead {
-  font-size: 1.08rem;
-  color: var(--muted);
-  max-width: 64ch;
+
+.lead{
+
+font-size:1.2rem;
+
+line-height:1.8;
+
+color:#6B7280;
+
+max-width:65ch;
+
 }
 .grid {
   display: grid;
