@@ -1,23 +1,66 @@
+:root{
 
-:root {
-  --bg: #050816;
-  --bg-2: #0B1220;
-  --card: #0F252A;
-  --card-2: #111827;
-  --green: #14B853;
-  --green-2: #2AAE67;
-  --navy: #0B1220;
+  /* ========= Brand Colors ========= */
+
+  --primary:#22C55E;
+  --primary-dark:#16A34A;
+  --primary-light:#DCFCE7;
+
+  --secondary:#14B8A6;
+  --accent:#2563EB;
+
+  /* ========= Backgrounds ========= */
+
+  --bg:#FFFFFF;
+  --bg-soft:#FCFDFC;
+  --bg-alt:#F8FBF8;
+  --surface:#FFFFFF;
+  --surface-2:#F9FAFB;
+
+  /* ========= Cards ========= */
+
+  --card:#FFFFFF;
+  --card-hover:#FFFFFF;
+
+  /* ========= Text ========= */
+
   --text:#111827;
+  --text-light:#374151;
   --muted:#6B7280;
-  --border: rgba(255,255,255,0.08);
-  --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-  --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.22);
-  --radius-xl: 28px;
-  --radius-lg: 22px;
-  --radius-md: 16px;
-  --radius-sm: 12px;
-  --max: 1200px;
-  --transition: 240ms cubic-bezier(.2,.8,.2,1);
+  --muted-light:#9CA3AF;
+
+  /* ========= Borders ========= */
+
+  --border:#E5E7EB;
+  --border-soft:#EEF2F7;
+
+  /* ========= Shadows ========= */
+
+  --shadow-xs:0 2px 6px rgba(15,23,42,.03);
+  --shadow-sm:0 8px 24px rgba(15,23,42,.05);
+  --shadow:0 15px 45px rgba(15,23,42,.08);
+  --shadow-lg:0 30px 80px rgba(15,23,42,.10);
+
+  /* ========= Glows ========= */
+
+  --glow-green:0 0 40px rgba(34,197,94,.12);
+  --glow-blue:0 0 40px rgba(37,99,235,.10);
+
+  /* ========= Radius ========= */
+
+  --radius-xl:32px;
+  --radius-lg:24px;
+  --radius-md:18px;
+  --radius-sm:14px;
+
+  /* ========= Layout ========= */
+
+  --max:1200px;
+
+  /* ========= Transition ========= */
+
+  --transition:240ms cubic-bezier(.2,.8,.2,1);
+
 }
 
 * { box-sizing: border-box; }
