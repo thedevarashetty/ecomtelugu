@@ -37,7 +37,6 @@
   if (counters.length && 'IntersectionObserver' in window) {
     const animateCounter = (el) => {
       const target = el.dataset.target || '0';
-      const isPlus = target.includes('+');
       const isText = /lifetime|private|access/i.test(target);
       if (isText) {
         el.textContent = target;
@@ -126,14 +125,17 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  // Fake form feedback for demo (contact form only — enrollment uses the
-  // real payment flow wired up below)
+  // Contact form: no backend inbox exists for general messages, so this
+  // opens the visitor's email client addressed to support, prefilled with
+  // their message — a real action, not a fake "message sent" claim.
+  const SUPPORT_EMAIL = 'ecomtelugu@gmail.com';
   $$('.js-form').forEach(form => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const note = form.dataset.note || 'Thanks — your message has been prepared.';
-      alert(note);
-      form.reset();
+      const get = (name) => (form.querySelector(`[name="${name}"]`)?.value || '').trim();
+      const subject = get('subject') || 'Website enquiry';
+      const body = `Name: ${get('name')}\nEmail: ${get('email')}\n\n${get('message')}`;
+      window.location.href = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
   });
 
@@ -155,8 +157,11 @@
       const s = document.createElement('script');
       s.src = RAZORPAY_CHECKOUT_SRC;
       s.onload = () => resolve();
-      s.onerror = () => reject(new Error('Could not load the Razorpay checkout script.'));
+      s.onerror = () => reject(new Error('Could not load the Razorpay checkout script. Check your connection and try again.'));
       document.head.appendChild(s);
+    }).catch((err) => {
+      razorpaySdkPromise = null; // allow a retry instead of failing forever for the rest of the page session
+      throw err;
     });
     return razorpaySdkPromise;
   }
@@ -209,7 +214,6 @@
   const enrollBtns = $$('.js-enroll');
   if (enrollBtns.length) {
     const overlay = buildEnrollModal();
-    const modal = $('.enroll-modal', overlay);
     const form = $('[data-role="form"]', overlay);
     const banner = $('[data-role="banner"]', overlay);
     const submitBtn = $('[data-role="submit"]', overlay);
@@ -221,6 +225,11 @@
 
     let cachedOrder = null; // { orderId, amount, currency, keyId }
     let cachedContact = null; // { fullName, email, phone }
+    // Bumped whenever the modal opens/closes so an in-flight request from a
+    // session the user has since abandoned (closed the modal mid-request)
+    // can detect it's stale and avoid popping up a Checkout the user no
+    // longer asked for.
+    let requestGen = 0;
 
     const fieldError = (name) => $(`[data-error-for="${name}"]`, overlay);
 
@@ -261,12 +270,14 @@
     }
 
     function openModal() {
+      requestGen++;
       resetToForm();
       overlay.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
+      requestGen++;
       overlay.classList.remove('open');
       document.body.style.overflow = '';
     }
@@ -378,11 +389,19 @@
 
     retryPayBtn.addEventListener('click', async () => {
       if (!cachedOrder) return resetToForm();
+      const myGen = requestGen;
+      retryPayBtn.disabled = true;
+      retryPayBtn.classList.add('loading');
       try {
         await loadRazorpaySdk();
+        if (myGen !== requestGen) return; // modal was closed/reopened while loading
         launchCheckout();
       } catch (err) {
+        if (myGen !== requestGen) return;
         showRetryState(err.message);
+      } finally {
+        retryPayBtn.disabled = false;
+        retryPayBtn.classList.remove('loading');
       }
     });
 
@@ -403,14 +422,18 @@
         return;
       }
 
+      const myGen = requestGen;
       setLoading(true, 'Starting checkout…');
       try {
         await loadRazorpaySdk();
-        cachedOrder = await createOrder(fullName.trim(), email.trim().toLowerCase(), phone.trim());
+        const order = await createOrder(fullName.trim(), email.trim().toLowerCase(), phone.trim());
+        if (myGen !== requestGen) return; // user closed/reopened the modal while this was in flight
+        cachedOrder = order;
         cachedContact = { fullName: fullName.trim(), email: email.trim().toLowerCase(), phone: phone.trim() };
         setLoading(false);
         launchCheckout();
       } catch (err) {
+        if (myGen !== requestGen) return;
         setLoading(false);
         showBanner(err.message, 'error');
       }
