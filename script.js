@@ -126,7 +126,8 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  // Fake form feedback for demo
+  // Fake form feedback for demo (contact form only — enrollment uses the
+  // real payment flow wired up below)
   $$('.js-form').forEach(form => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -136,15 +137,285 @@
     });
   });
 
-  // Payment hook placeholders
-  $$('.js-enroll').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const plan = btn.getAttribute('data-plan') || 'ecom-telugu-masterclass';
-      const amount = btn.getAttribute('data-amount') || '19900';
-      console.log('[Razorpay Hook]', { plan, amount, keyId: window.RAZORPAY_KEY_ID || 'YOUR_RAZORPAY_KEY_ID' });
-      alert('Razorpay checkout hook is ready. Connect your key ID and order creation endpoint.');
+  // ================================================================
+  // Enrollment + Razorpay payment flow
+  // ================================================================
+  const API_BASE_URL = 'https://ecomtelugu-backend.thedevarashetty.workers.dev/api/v1';
+  const RAZORPAY_CHECKOUT_SRC = 'https://checkout.razorpay.com/v1/checkout.js';
+
+  // Mirrors the backend's Zod rules (src/utils/validation.ts) so the user
+  // gets instant feedback; the backend remains the sole source of truth.
+  const PHONE_REGEX = /^(?:\+91|91)?[6-9]\d{9}$/;
+
+  let razorpaySdkPromise = null;
+  function loadRazorpaySdk() {
+    if (razorpaySdkPromise) return razorpaySdkPromise;
+    razorpaySdkPromise = new Promise((resolve, reject) => {
+      if (window.Razorpay) return resolve();
+      const s = document.createElement('script');
+      s.src = RAZORPAY_CHECKOUT_SRC;
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error('Could not load the Razorpay checkout script.'));
+      document.head.appendChild(s);
     });
-  });
+    return razorpaySdkPromise;
+  }
+
+  function buildEnrollModal() {
+    const overlay = document.createElement('div');
+    overlay.className = 'enroll-overlay';
+    overlay.innerHTML = `
+      <div class="enroll-modal card" role="dialog" aria-modal="true" aria-labelledby="enrollTitle">
+        <button type="button" class="enroll-close" aria-label="Close">&times;</button>
+        <h3 id="enrollTitle">Enroll in E-Com Telugu Masterclass</h3>
+        <p class="lead">Enter your details to continue to secure payment via Razorpay.</p>
+
+        <div class="enroll-banner" data-role="banner"></div>
+
+        <form class="form" data-role="form" novalidate>
+          <div class="field">
+            <label for="enrollName">Full Name</label>
+            <input id="enrollName" name="fullName" placeholder="Your full name" autocomplete="name" required>
+            <div class="enroll-field-error" data-error-for="fullName"></div>
+          </div>
+          <div class="field">
+            <label for="enrollEmail">Email</label>
+            <input id="enrollEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+            <div class="enroll-field-error" data-error-for="email"></div>
+          </div>
+          <div class="field">
+            <label for="enrollPhone">Phone</label>
+            <input id="enrollPhone" name="phone" type="tel" placeholder="10-digit mobile number" autocomplete="tel" required>
+            <div class="enroll-field-error" data-error-for="phone"></div>
+          </div>
+          <button type="submit" class="btn btn-primary enroll-submit" data-role="submit">
+            <span class="enroll-spinner"></span>
+            <span data-role="submit-label">Continue to Payment</span>
+          </button>
+        </form>
+
+        <div class="enroll-retry-actions" data-role="retry" style="display:none;">
+          <button type="button" class="btn btn-primary enroll-submit" data-role="retry-pay">Retry Payment</button>
+          <button type="button" class="enroll-link-btn" data-role="start-over">Start over with different details</button>
+        </div>
+
+        <p class="enroll-secure-note">🔒 Secure checkout powered by Razorpay</p>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    return overlay;
+  }
+
+  const enrollBtns = $$('.js-enroll');
+  if (enrollBtns.length) {
+    const overlay = buildEnrollModal();
+    const modal = $('.enroll-modal', overlay);
+    const form = $('[data-role="form"]', overlay);
+    const banner = $('[data-role="banner"]', overlay);
+    const submitBtn = $('[data-role="submit"]', overlay);
+    const submitLabel = $('[data-role="submit-label"]', overlay);
+    const retryWrap = $('[data-role="retry"]', overlay);
+    const retryPayBtn = $('[data-role="retry-pay"]', overlay);
+    const startOverBtn = $('[data-role="start-over"]', overlay);
+    const closeBtn = $('.enroll-close', overlay);
+
+    let cachedOrder = null; // { orderId, amount, currency, keyId }
+    let cachedContact = null; // { fullName, email, phone }
+
+    const fieldError = (name) => $(`[data-error-for="${name}"]`, overlay);
+
+    function clearErrors() {
+      ['fullName', 'email', 'phone'].forEach(name => {
+        const el = fieldError(name);
+        if (el) el.textContent = '';
+      });
+      banner.className = 'enroll-banner';
+      banner.textContent = '';
+    }
+
+    function showBanner(message, type) {
+      banner.textContent = message;
+      banner.className = `enroll-banner show ${type}`;
+    }
+
+    function setLoading(isLoading, label) {
+      submitBtn.disabled = isLoading;
+      submitBtn.classList.toggle('loading', isLoading);
+      submitLabel.textContent = isLoading ? (label || 'Please wait…') : 'Continue to Payment';
+    }
+
+    function resetToForm() {
+      cachedOrder = null;
+      cachedContact = null;
+      form.reset();
+      form.style.display = '';
+      retryWrap.style.display = 'none';
+      clearErrors();
+      setLoading(false);
+    }
+
+    function showRetryState(message) {
+      form.style.display = 'none';
+      retryWrap.style.display = 'grid';
+      showBanner(message, 'error');
+    }
+
+    function openModal() {
+      resetToForm();
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    enrollBtns.forEach(btn => btn.addEventListener('click', openModal));
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    });
+    startOverBtn.addEventListener('click', resetToForm);
+
+    function validate(fullName, email, phone) {
+      const errors = {};
+      if (!fullName || fullName.trim().length < 2) {
+        errors.fullName = 'Please enter your full name (min 2 characters).';
+      } else if (fullName.trim().length > 100) {
+        errors.fullName = 'Full name must be at most 100 characters.';
+      }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        errors.email = 'Please enter a valid email address.';
+      }
+      if (!phone || !PHONE_REGEX.test(phone.trim())) {
+        errors.phone = 'Please enter a valid 10-digit Indian phone number.';
+      }
+      return errors;
+    }
+
+    async function createOrder(fullName, email, phone) {
+      const res = await fetch(`${API_BASE_URL}/order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName, email, phone }),
+      });
+      let json;
+      try {
+        json = await res.json();
+      } catch {
+        throw new Error('Unexpected response from the server. Please try again.');
+      }
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || 'Could not start checkout. Please try again.');
+      }
+      return json.data; // { orderId, amount, currency, keyId }
+    }
+
+    async function verifyPayment(razorpayResponse) {
+      const res = await fetch(`${API_BASE_URL}/payment/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          razorpay_order_id: razorpayResponse.razorpay_order_id,
+          razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+          razorpay_signature: razorpayResponse.razorpay_signature,
+        }),
+      });
+      let json;
+      try {
+        json = await res.json();
+      } catch {
+        throw new Error('Payment may have succeeded, but we could not confirm it automatically. Please contact support with your payment ID.');
+      }
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || 'Payment verification failed.');
+      }
+      return json.data; // { orderId, status, inviteLink }
+    }
+
+    function launchCheckout() {
+      const options = {
+        key: cachedOrder.keyId,
+        amount: cachedOrder.amount,
+        currency: cachedOrder.currency,
+        order_id: cachedOrder.orderId,
+        name: 'E-Com Telugu',
+        description: 'E-Com Telugu Masterclass',
+        prefill: {
+          name: cachedContact.fullName,
+          email: cachedContact.email,
+          contact: cachedContact.phone,
+        },
+        theme: { color: '#16A34A' },
+        handler: async function (response) {
+          setLoading(true, 'Verifying payment…');
+          try {
+            sessionStorage.setItem('ecomtelugu_order_id', cachedOrder.orderId);
+            await verifyPayment(response);
+            closeModal();
+            window.location.href = 'success.html';
+          } catch (err) {
+            showRetryState(err.message);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            showRetryState('Checkout was closed before payment completed. No amount was charged.');
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (resp) {
+        showRetryState(
+          'Payment failed' + (resp?.error?.description ? `: ${resp.error.description}` : '.') + ' You have not been charged.'
+        );
+      });
+      rzp.open();
+    }
+
+    retryPayBtn.addEventListener('click', async () => {
+      if (!cachedOrder) return resetToForm();
+      try {
+        await loadRazorpaySdk();
+        launchCheckout();
+      } catch (err) {
+        showRetryState(err.message);
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const fullName = $('#enrollName', overlay).value;
+      const email = $('#enrollEmail', overlay).value;
+      const phone = $('#enrollPhone', overlay).value;
+
+      const errors = validate(fullName, email, phone);
+      if (Object.keys(errors).length) {
+        Object.entries(errors).forEach(([name, msg]) => {
+          const el = fieldError(name);
+          if (el) el.textContent = msg;
+        });
+        return;
+      }
+
+      setLoading(true, 'Starting checkout…');
+      try {
+        await loadRazorpaySdk();
+        cachedOrder = await createOrder(fullName.trim(), email.trim().toLowerCase(), phone.trim());
+        cachedContact = { fullName: fullName.trim(), email: email.trim().toLowerCase(), phone: phone.trim() };
+        setLoading(false);
+        launchCheckout();
+      } catch (err) {
+        setLoading(false);
+        showBanner(err.message, 'error');
+      }
+    });
+  }
 })();
 
 
