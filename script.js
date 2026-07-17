@@ -172,7 +172,7 @@
     overlay.innerHTML = `
       <div class="enroll-modal card" role="dialog" aria-modal="true" aria-labelledby="enrollTitle">
         <button type="button" class="enroll-close" aria-label="Close">&times;</button>
-        <h3 id="enrollTitle">Enroll in E-Com Telugu Masterclass</h3>
+        <h3 id="enrollTitle">Enroll in the Telugu Dropshipping Course</h3>
         <p class="lead">Enter your details to continue to secure payment via Razorpay.</p>
 
         <div class="enroll-banner" data-role="banner"></div>
@@ -353,7 +353,7 @@
         currency: cachedOrder.currency,
         order_id: cachedOrder.orderId,
         name: 'E-Com Telugu',
-        description: 'E-Com Telugu Masterclass',
+        description: 'Telugu Dropshipping & E-commerce Course',
         prefill: {
           name: cachedContact.fullName,
           email: cachedContact.email,
